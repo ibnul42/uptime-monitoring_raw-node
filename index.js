@@ -29,6 +29,13 @@ data.update('testing', 'newFile', {name: 'Bangladesh', language: "BN"}, (err) =>
 })
 */
 
+// delete
+/*
+data.delete('testing', 'newFile', (err) => {
+    console.log(err)
+})
+*/
+
 // configuration
 app.config={
     port: 3000

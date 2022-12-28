@@ -4,11 +4,13 @@ const environments = {}
 environments.staging = {
     port: 3000,
     envName: 'staging',
+    secretKey: 'kjdfgvjkh4378bbv'
 }
 
 environments.production = {
     port: 5000,
     envName: 'production',
+    secretKey: 'kjdfgvjkh4378bbv'
 }
 
 // check right environment
