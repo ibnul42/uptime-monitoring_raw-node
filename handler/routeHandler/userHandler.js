@@ -108,7 +108,71 @@ handler._users.post = (requestProperties, callback) => {
 }
 
 handler._users.put = (requestProperties, callback) => {
-  callback(200)
+    const firstName =
+    typeof requestProperties.body.firstName === "string" &&
+    requestProperties.body.firstName.trim().length > 0
+      ? requestProperties.body.firstName
+      : false
+
+  const lastName =
+    typeof requestProperties.body.lastName === "string" &&
+    requestProperties.body.lastName.trim().length > 0
+      ? requestProperties.body.lastName
+      : false
+
+  const phone =
+    typeof requestProperties.body.phone === "string" &&
+    requestProperties.body.phone.trim().length === 11
+      ? requestProperties.body.phone
+      : false
+      const password =
+      typeof requestProperties.body.password === "string" &&
+      requestProperties.body.password.trim().length > 0
+        ? requestProperties.body.password
+        : false
+
+  if ( phone ) {
+    if(firstName || lastName || password) {
+        data.read('users', phone, (err, user) => {
+            if(!err && user){
+                let userData = {...parseJson(user)}
+                if(firstName){
+                    userData.firstName = firstName
+                }
+                if(lastName){
+                    userData.lastName = lastName
+                }
+                if(password){
+                    userData.password = hash(password)
+                }
+                data.update('users', phone, userData, (err) => {
+                    if(!err){
+                        callback(200, {
+                            message: "User has successfully updated",
+                          })
+                    } else {
+                        callback(400, {
+                            error: "There was a problem in the server!",
+                          })
+                    }
+                })
+            } else {
+                callback(400, {
+                    error: "There was a problem in the server!",
+                  })
+            }
+        })
+    } else {
+        callback(400, {
+            error: "You have a problem in your request!",
+          })
+    }
+    
+  } else {
+    callback(400, {
+      error: "Sorry, Invalid phone number!",
+    })
+  }
 }
 
 handler._users.delete = (requestProperties, callback) => {
