@@ -22,23 +22,23 @@ handler._users.get = (requestProperties, callback) => {
     requestProperties.queryStrings.phone.trim().length === 11
       ? requestProperties.queryStrings.phone
       : false
-    if(phone) {
-        data.read('users', phone, (err, data) => {
-            if(!err && data) {
-                const user = {...parseJson(data)}
-                delete user.password
-                callback(200, user)
-            } else{
-                callback(404, {
-                    error: 'Requested user not found'
-                })
-            }
-        })
-    } else {
+  if (phone) {
+    data.read("users", phone, (err, data) => {
+      if (!err && data) {
+        const user = { ...parseJson(data) }
+        delete user.password
+        callback(200, user)
+      } else {
         callback(404, {
-            error: 'Requested user not found'
+          error: "Requested user not found",
         })
-    }
+      }
+    })
+  } else {
+    callback(404, {
+      error: "Requested user not found",
+    })
+  }
 }
 
 handler._users.post = (requestProperties, callback) => {
@@ -108,7 +108,7 @@ handler._users.post = (requestProperties, callback) => {
 }
 
 handler._users.put = (requestProperties, callback) => {
-    const firstName =
+  const firstName =
     typeof requestProperties.body.firstName === "string" &&
     requestProperties.body.firstName.trim().length > 0
       ? requestProperties.body.firstName
@@ -125,49 +125,48 @@ handler._users.put = (requestProperties, callback) => {
     requestProperties.body.phone.trim().length === 11
       ? requestProperties.body.phone
       : false
-      const password =
-      typeof requestProperties.body.password === "string" &&
-      requestProperties.body.password.trim().length > 0
-        ? requestProperties.body.password
-        : false
+  const password =
+    typeof requestProperties.body.password === "string" &&
+    requestProperties.body.password.trim().length > 0
+      ? requestProperties.body.password
+      : false
 
-  if ( phone ) {
-    if(firstName || lastName || password) {
-        data.read('users', phone, (err, user) => {
-            if(!err && user){
-                let userData = {...parseJson(user)}
-                if(firstName){
-                    userData.firstName = firstName
-                }
-                if(lastName){
-                    userData.lastName = lastName
-                }
-                if(password){
-                    userData.password = hash(password)
-                }
-                data.update('users', phone, userData, (err) => {
-                    if(!err){
-                        callback(200, {
-                            message: "User has successfully updated",
-                          })
-                    } else {
-                        callback(400, {
-                            error: "There was a problem in the server!",
-                          })
-                    }
-                })
+  if (phone) {
+    if (firstName || lastName || password) {
+      data.read("users", phone, (err, user) => {
+        if (!err && user) {
+          let userData = { ...parseJson(user) }
+          if (firstName) {
+            userData.firstName = firstName
+          }
+          if (lastName) {
+            userData.lastName = lastName
+          }
+          if (password) {
+            userData.password = hash(password)
+          }
+          data.update("users", phone, userData, (err) => {
+            if (!err) {
+              callback(200, {
+                message: "User has successfully updated",
+              })
             } else {
-                callback(400, {
-                    error: "There was a problem in the server!",
-                  })
+              callback(400, {
+                error: "There was a problem in the server!",
+              })
             }
-        })
-    } else {
-        callback(400, {
-            error: "You have a problem in your request!",
           })
+        } else {
+          callback(400, {
+            error: "There was a problem in the server!",
+          })
+        }
+      })
+    } else {
+      callback(400, {
+        error: "You have a problem in your request!",
+      })
     }
-    
   } else {
     callback(400, {
       error: "Sorry, Invalid phone number!",
@@ -176,7 +175,28 @@ handler._users.put = (requestProperties, callback) => {
 }
 
 handler._users.delete = (requestProperties, callback) => {
-  callback(200)
+    const phone =
+    typeof requestProperties.queryStrings.phone === "string" &&
+    requestProperties.queryStrings.phone.trim().length === 11
+      ? requestProperties.queryStrings.phone
+      : false
+    if(phone) {
+        data.delete('users', phone, (err) => {
+           if(!err) {
+            callback(200, {
+                message: "User deleted successfully",
+              })
+           } else {
+            callback(400, {
+                error: "There was a problem in the server!",
+              })
+           } 
+        })
+    } else {
+        callback(400, {
+            error: "Sorry, Invalid phone number!",
+          })
+    }
 }
 
 // export module
